@@ -13,6 +13,8 @@ export const FLOOR_Y = 0;
 export const SHELF_THICKNESS = 0.05;
 
 export const BOOK_COLUMNS = 4;
+/** How many books lie flat before a floor pile spreads deeper instead of taller. */
+export const FLOOR_STACK_LAYERS = 3;
 
 const bayCount = 4;
 export const TOTAL_WIDTH =
