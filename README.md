@@ -25,13 +25,20 @@ read.
 4. Once a shelf is full, overflow books spill onto the floor in front of it — a visceral "this
    didn't fit" moment with no reading of numbers required.
 
-## Planned features
+## Features
 
-- Paste-box and file/repo drop input, tokenized live as you type (debounced).
+- Paste-box input, tokenized live as you type (debounced), stacking books onto all four shelves
+  within about a second.
 - Four shelves: GPT-5.6, Claude, Gemini, Kimi K3 — capacities and tokenizer approximations kept
   in one config module so new models are a data change, not a code change.
-- Physically simulated stacking: books land with a little weight, lean against their neighbors,
-  and spill/tumble onto the floor on overflow.
+- Books ease into their resting slot, spill onto the floor once a shelf's capacity is exceeded,
+  and each shelf's live token count and book fill are always visible in the readout.
+- A hanging banker's lamp whose glow and shadow reach respond to overall shelf occupancy, with a
+  synth thunk/clatter (mute persisted) on placement and overflow.
+
+## Planned
+
+- File/repo drop input (`.txt`, flattened public GitHub repos).
 - Camera orbit around the bookcase; click a book to see which chunk of source text it represents.
 - Shareable state via URL so a paste + its shelf outcome can be linked to someone else.
 
@@ -54,5 +61,6 @@ npm run build    # production build to dist/
 
 ## Status
 
-Early scaffold — see [`docs/VISION.md`](docs/VISION.md) for the full design and
-[`docs/BACKLOG.md`](docs/BACKLOG.md) for the build plan.
+The core wow moment is built and working: paste text, watch it stack. See
+[`docs/VISION.md`](docs/VISION.md) for the full design, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+for how the code is organized, and [`docs/BACKLOG.md`](docs/BACKLOG.md) for what's done vs. planned.
