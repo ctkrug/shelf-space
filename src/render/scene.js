@@ -1,38 +1,38 @@
 import * as THREE from "three";
+import { THEME } from "./theme.js";
+import { createBookcase } from "./bookcase.js";
 
 /**
- * Minimal scaffold scene: proves the render pipeline (camera, lights,
- * resize handling, animation loop) works end to end. The real bookcase
- * and book meshes replace the placeholder cube during BUILD.
+ * Builds the reading-room scene: camera, ambient lighting, resize
+ * handling, and the static walnut bookcase. Dynamic content (books,
+ * lamp) is added by callers against the bay layout this returns.
  */
 export function createScene(container) {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x14110f);
+  scene.background = new THREE.Color(THEME.bg);
+  scene.fog = new THREE.Fog(THEME.bg, 4, 11);
 
   const camera = new THREE.PerspectiveCamera(
-    50,
+    42,
     container.clientWidth / container.clientHeight,
     0.1,
     100,
   );
-  camera.position.set(2.5, 2, 3.5);
-  camera.lookAt(0, 0, 0);
+  camera.position.set(0, 1.55, 4.7);
+  camera.lookAt(0, 1.15, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
-  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-  const key = new THREE.DirectionalLight(0xffd8a8, 1.2);
-  key.position.set(3, 4, 2);
-  scene.add(ambient, key);
+  const ambient = new THREE.AmbientLight(0x3a2c1e, 0.7);
+  const fill = new THREE.DirectionalLight(0x8a6a4a, 0.35);
+  fill.position.set(-3, 3, 4);
+  scene.add(ambient, fill);
 
-  const placeholder = new THREE.Mesh(
-    new THREE.BoxGeometry(0.6, 0.9, 0.15),
-    new THREE.MeshStandardMaterial({ color: 0xb5482a }),
-  );
-  scene.add(placeholder);
+  const bookcase = createBookcase();
+  scene.add(bookcase.group);
 
   function resize() {
     camera.aspect = container.clientWidth / container.clientHeight;
@@ -40,10 +40,9 @@ export function createScene(container) {
     renderer.setSize(container.clientWidth, container.clientHeight);
   }
 
-  function tick(elapsedSeconds) {
-    placeholder.rotation.y = elapsedSeconds * 0.6;
+  function tick() {
     renderer.render(scene, camera);
   }
 
-  return { resize, tick };
+  return { scene, camera, resize, tick, bookcase };
 }
