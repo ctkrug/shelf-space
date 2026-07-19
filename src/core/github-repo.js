@@ -16,7 +16,7 @@ function isTextFile(path) {
  * Contents APIs. It has a conservative file cap so a giant repository cannot
  * freeze the browser or produce an unshareable paste.
  */
-export async function fetchPublicRepoText(repoUrl, fetchImpl = fetch) {
+export async function fetchPublicRepoText(repoUrl, fetchImpl = globalThis.fetch) {
   const repo = parseGitHubRepoUrl(repoUrl);
   if (!repo) return { ok: false, error: "Paste a public GitHub repository URL." };
 
@@ -40,7 +40,7 @@ export async function fetchPublicRepoText(repoUrl, fetchImpl = fetch) {
       if (!response.ok) return "";
       const content = await response.json();
       if (content.encoding !== "base64" || typeof content.content !== "string") return "";
-      return `\n\n// ${file.path}\n${atob(content.content.replace(/\n/g, ""))}`;
+      return `\n\n// ${file.path}\n${globalThis.atob(content.content.replace(/\n/g, ""))}`;
     }));
     const text = contents.join("");
     return text.trim() ? { ok: true, text, fileCount: files.length } : { ok: false, error: "GitHub returned no readable text files." };
