@@ -65,6 +65,7 @@ export function createBookcase() {
     woodMaterial,
   );
   backPanel.position.set(0, FLOOR_Y + CASE_HEIGHT / 2, -BAY_DEPTH / 2 - 0.03);
+  backPanel.receiveShadow = true;
   group.add(backPanel);
 
   const endGeometry = new THREE.BoxGeometry(END_PANEL_WIDTH, CASE_HEIGHT, BAY_DEPTH);
@@ -87,6 +88,7 @@ export function createBookcase() {
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(FLOOR_WIDTH, FLOOR_DEPTH), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(0, FLOOR_Y, BAY_DEPTH / 2 + FLOOR_DEPTH / 2 - 0.02);
+  floor.receiveShadow = true;
   group.add(floor);
 
   const bays = MODELS.map((model, index) => {
@@ -97,6 +99,7 @@ export function createBookcase() {
       shelfMaterial,
     );
     shelfBoard.position.set(layout.centerX, SHELF_Y - SHELF_THICKNESS / 2, 0);
+    shelfBoard.receiveShadow = true;
     group.add(shelfBoard);
 
     const label = new THREE.Mesh(

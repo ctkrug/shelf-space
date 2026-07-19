@@ -1,11 +1,13 @@
 import * as THREE from "three";
 import { THEME } from "./theme.js";
 import { createBookcase } from "./bookcase.js";
+import { createLamp } from "./lamp.js";
 
 /**
  * Builds the reading-room scene: camera, ambient lighting, resize
- * handling, and the static walnut bookcase. Dynamic content (books,
- * lamp) is added by callers against the bay layout this returns.
+ * handling, the static walnut bookcase, and the signature hanging lamp.
+ * Dynamic content (books) is added by callers against the bay layout
+ * this returns.
  */
 export function createScene(container) {
   const scene = new THREE.Scene();
@@ -24,6 +26,8 @@ export function createScene(container) {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
   const ambient = new THREE.AmbientLight(0x3a2c1e, 0.7);
@@ -34,15 +38,19 @@ export function createScene(container) {
   const bookcase = createBookcase();
   scene.add(bookcase.group);
 
+  const lamp = createLamp(bookcase.caseTopY);
+  scene.add(lamp.group);
+
   function resize() {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
   }
 
-  function tick() {
+  function tick(deltaSeconds, occupancy) {
+    lamp.update(deltaSeconds, occupancy);
     renderer.render(scene, camera);
   }
 
-  return { scene, camera, resize, tick, bookcase };
+  return { scene, camera, resize, tick, bookcase, lamp };
 }
