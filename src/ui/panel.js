@@ -1,3 +1,6 @@
+import { readTextFile } from "../core/file-input.js";
+import { fetchPublicRepoText, parseGitHubRepoUrl } from "../core/github-repo.js";
+
 const DEBOUNCE_MS = 120;
 
 function formatCount(n) {
@@ -23,9 +26,21 @@ export function initPastePanel({ onInput }) {
 
   let debounceTimer = null;
 
-  function emit() {
-    const text = textarea.value;
+  async function emit() {
+    let text = textarea.value;
     charCount.textContent = `${formatCount(text.length)} character${text.length === 1 ? "" : "s"}`;
+    if (parseGitHubRepoUrl(text)) {
+      showInputMessage("Loading public repository…");
+      const result = await fetchPublicRepoText(text);
+      if (!result.ok) {
+        showInputMessage(result.error, true);
+        return;
+      }
+      text = result.text;
+      textarea.value = text;
+      charCount.textContent = `${formatCount(text.length)} characters`;
+      showInputMessage(`Loaded ${result.fileCount} text files from GitHub.`);
+    }
     onInput(text);
   }
 
@@ -117,4 +132,3 @@ export function initPastePanel({ onInput }) {
 
   return { renderReadout };
 }
-import { readTextFile } from "../core/file-input.js";
