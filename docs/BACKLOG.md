@@ -32,17 +32,17 @@ true/false against — no "works well" vibes checks.
 
 ## Epic 2 — Input & interaction
 
-- [ ] **2.1 File-drop input for `.txt` files**
+- [x] **2.1 File-drop input for `.txt` files**
   - Dragging a `.txt` file onto the paste panel loads its contents into the input and triggers
     a re-stack.
   - Dropping a non-text file shows an inline error state, not a crash or silent no-op.
 
-- [ ] **2.2 Public GitHub repo input, flattened**
+- [x] **2.2 Public GitHub repo input, flattened**
   - Pasting a public GitHub repo URL fetches and concatenates its text-file contents (via
     GitHub's API) and feeds that into the tokenizer/stacking pipeline.
   - A private or nonexistent repo URL shows an inline error state, not a crash.
 
-- [ ] **2.3 Orbit camera around the bookcase**
+- [x] **2.3 Orbit camera around the bookcase**
   - Dragging (mouse) or one-finger-dragging (touch) orbits the camera around the shelves;
     scroll/pinch zooms within sane min/max bounds.
   - Camera controls don't intercept the paste panel's own scroll/touch targets.
