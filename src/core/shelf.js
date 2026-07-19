@@ -4,6 +4,15 @@ import { estimateTokens } from "./tokenizer.js";
 export const TOKENS_PER_BOOK = 2000;
 
 /**
+ * How many books fit on a model's shelf before it's full. Depends only
+ * on the model's context window, not on any pasted text, so the render
+ * layer can size its book buffers up front without a text sample.
+ */
+export function shelfCapacityBooksFor(model) {
+  return Math.max(1, Math.floor(model.contextWindow / TOKENS_PER_BOOK));
+}
+
+/**
  * Turns a token count into shelf occupancy: how many books fit on the
  * shelf before it's full, and how many spill onto the floor in front
  * of it. This is the core of the physical metaphor, so it's kept as
@@ -12,7 +21,7 @@ export const TOKENS_PER_BOOK = 2000;
 export function computeShelfState(text, model) {
   const tokens = estimateTokens(text, model);
   const totalBooks = tokens === 0 ? 0 : Math.max(1, Math.ceil(tokens / TOKENS_PER_BOOK));
-  const shelfCapacityBooks = Math.max(1, Math.floor(model.contextWindow / TOKENS_PER_BOOK));
+  const shelfCapacityBooks = shelfCapacityBooksFor(model);
 
   const booksOnShelf = Math.min(totalBooks, shelfCapacityBooks);
   const booksOnFloor = Math.max(0, totalBooks - shelfCapacityBooks);
