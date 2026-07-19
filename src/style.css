@@ -297,6 +297,10 @@ canvas {
 /* --- responsive: bottom-sheet on phones, per DESIGN.md layout intent --- */
 
 @media (max-width: 768px) {
+  #app {
+    height: 55vh;
+  }
+
   .paste-panel {
     width: 100vw;
     margin: 0;
@@ -331,14 +335,13 @@ canvas {
   }
 
   .panel-body {
-    display: grid;
-    grid-template-rows: 1fr;
-    transition: grid-template-rows var(--motion-ui);
+    max-height: 70vh;
     overflow: hidden;
+    transition: max-height var(--motion-ui);
   }
 
   .panel-toggle[aria-expanded="false"] + .panel-body {
-    grid-template-rows: 0fr;
+    max-height: 0;
   }
 }
 
