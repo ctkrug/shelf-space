@@ -2,12 +2,13 @@ import * as THREE from "three";
 import { THEME } from "./theme.js";
 import { createBookcase } from "./bookcase.js";
 import { createLamp } from "./lamp.js";
+import { createBookRenderers } from "./books.js";
 
 /**
  * Builds the reading-room scene: camera, ambient lighting, resize
- * handling, the static walnut bookcase, and the signature hanging lamp.
- * Dynamic content (books) is added by callers against the bay layout
- * this returns.
+ * handling, the static walnut bookcase, the signature hanging lamp, and
+ * the book piles/floor spill for all four bays. Callers drive content
+ * by calling the returned `books.update(shelfStatesByModelId)`.
  */
 export function createScene(container) {
   const scene = new THREE.Scene();
@@ -41,6 +42,9 @@ export function createScene(container) {
   const lamp = createLamp(bookcase.caseTopY);
   scene.add(lamp.group);
 
+  const books = createBookRenderers(bookcase.bays);
+  scene.add(books.group);
+
   function resize() {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
@@ -52,5 +56,5 @@ export function createScene(container) {
     renderer.render(scene, camera);
   }
 
-  return { scene, camera, resize, tick, bookcase, lamp };
+  return { scene, camera, resize, tick, bookcase, lamp, books };
 }
