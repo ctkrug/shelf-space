@@ -3,11 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shelf Space</title>
+    <title>Shelf Space — paste anything, watch it fill a context window</title>
+    <meta
+      name="description"
+      content="Paste any text and watch it physically stack as books on shelves sized to GPT-5.6, Claude, Gemini, and Kimi K3's real context windows."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" role="presentation"></div>
+
+    <div id="ui">
+      <header class="topbar">
+        <span class="wordmark">Shelf<span class="wordmark-accent">&nbsp;Space</span></span>
+        <button id="mute-toggle" class="icon-btn" type="button" aria-pressed="false">
+          <svg id="mute-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 9v6h4l5 5V4L8 9H4z"
+              fill="currentColor"
+            />
+            <path
+              id="mute-slash"
+              d="M16 8.5c1.2 1 1.2 6 0 7"
+              stroke="currentColor"
+              stroke-width="1.6"
+              fill="none"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </header>
+
+      <section class="paste-panel" aria-label="Paste text to stack on the shelves">
+        <button
+          id="panel-toggle"
+          class="panel-toggle"
+          type="button"
+          aria-expanded="true"
+          aria-controls="panel-body"
+        >
+          <span>Paste text</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" fill="none" />
+          </svg>
+        </button>
+
+        <div id="panel-body" class="panel-body">
+          <div class="panel-inner">
+            <label class="visually-hidden" for="paste-input">Text to stack onto the shelves</label>
+            <textarea
+              id="paste-input"
+              class="paste-input"
+              placeholder="Paste an essay, a whole novel, a flattened repo…"
+            ></textarea>
+
+            <div class="panel-actions">
+              <button id="clear-btn" class="btn btn-ghost" type="button">Clear</button>
+              <span id="char-count" class="char-count">0 characters</span>
+            </div>
+
+            <ul id="readout" class="readout" aria-live="polite"></ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>
