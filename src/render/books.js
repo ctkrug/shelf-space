@@ -50,12 +50,18 @@ function createBayBooks(model, layout) {
   shelfMesh.castShadow = true;
   shelfMesh.receiveShadow = true;
   shelfMesh.count = 0;
+  // InstancedMesh caches its bounding sphere from whatever instances existed
+  // the first time it's culling-tested (count=0 before any paste) and never
+  // recomputes it, so a mesh that starts empty gets silently frustum-culled
+  // forever even after real instances are added.
+  shelfMesh.frustumCulled = false;
 
   const floorCapacity = Math.min(MAX_RENDERED_FLOOR_BOOKS, Math.max(1, shelfCapacity * 4));
   const floorMesh = new THREE.InstancedMesh(bookGeometry, material.clone(), floorCapacity);
   floorMesh.castShadow = true;
   floorMesh.receiveShadow = true;
   floorMesh.count = 0;
+  floorMesh.frustumCulled = false;
 
   let previousShelfRendered = 0;
   let previousFloorRendered = 0;
