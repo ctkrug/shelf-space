@@ -53,6 +53,7 @@ export function createScene(container) {
 
   function tick(deltaSeconds, occupancy) {
     lamp.update(deltaSeconds, occupancy);
+    books.animate(deltaSeconds);
     renderer.render(scene, camera);
   }
 
