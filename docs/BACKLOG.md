@@ -5,26 +5,26 @@ true/false against — no "works well" vibes checks.
 
 ## Epic 1 — Core stack pipeline (the wow moment)
 
-- [ ] **1.1 Paste text and watch it stack across all four shelves — WOW MOMENT**
+- [x] **1.1 Paste text and watch it stack across all four shelves — WOW MOMENT**
   - Pasting text into the input renders book meshes stacking onto the GPT-5.6, Claude, Gemini,
     and Kimi K3 shelves within 2 seconds, with no page reload.
   - Pasting the full text of *War and Peace* fills the GPT-5.6 shelf near capacity, overflows
     Claude and Gemini onto the floor, and leaves Kimi K3 mostly empty.
   - Clearing the input empties all four shelves back to zero books.
 
-- [ ] **1.2 Shelves overflow onto the floor when a model's context window is exceeded**
+- [x] **1.2 Shelves overflow onto the floor when a model's context window is exceeded**
   - Once a shelf's book count reaches its capacity, additional books render on the floor in
     front of that shelf instead of stacking further.
   - `computeShelfState` remains the single source of truth for shelf/floor counts — no duplicate
     occupancy math added in the render layer.
 
-- [ ] **1.3 Live per-shelf token/book readout**
+- [x] **1.3 Live per-shelf token/book readout**
   - Each shelf label shows its estimated token count and "N / capacity books," updating on every
     input change.
   - A shelf that's currently overflowing shows a distinct (danger-colored) readout state, not
     just an overflow in the 3D scene.
 
-- [ ] **1.4 Design polish: bookcase scene matches `docs/DESIGN.md`**
+- [x] **1.4 Design polish: bookcase scene matches `docs/DESIGN.md`**
   - Scene lighting, wood/brass materials, and shelf-label typography match the tokens in
     `docs/DESIGN.md` (no default Three.js gray materials).
   - The banker's-lamp signature detail is present and its glow visibly responds to overall
@@ -59,7 +59,7 @@ true/false against — no "works well" vibes checks.
 
 ## Epic 3 — Feel, accessibility & ship
 
-- [ ] **3.1 Book placement/spill animation and synth SFX**
+- [x] **3.1 Book placement/spill animation and synth SFX**
   - Each book eases into its resting slot over 110–140ms rather than appearing instantly.
   - A distinct synth "thunk" plays on placement and a "clatter" plays on floor spill; a mute
     toggle in the top bar persists across reloads via `localStorage`.
