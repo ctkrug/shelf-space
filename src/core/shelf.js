@@ -29,3 +29,16 @@ export function computeShelfState(text, model) {
     overflowing: booksOnFloor > 0,
   };
 }
+
+/**
+ * Runs computeShelfState across every model in one pass, keyed by model id,
+ * so callers (UI readouts, the render layer) recompute all four shelves from
+ * a single pasted text without re-deriving the per-model loop themselves.
+ */
+export function computeAllShelfStates(text, models) {
+  const byModelId = {};
+  for (const model of models) {
+    byModelId[model.id] = computeShelfState(text, model);
+  }
+  return byModelId;
+}
