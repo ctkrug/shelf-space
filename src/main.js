@@ -5,9 +5,14 @@ const { resize, tick } = createScene(container);
 
 window.addEventListener("resize", resize);
 
-const clock = { start: performance.now() };
+// Mutated in place by the paste-panel input handler once it's wired up.
+const occupancy = { avgFillRatio: 0, anyOverflowing: false };
+
+let lastTime = performance.now();
 function loop(now) {
-  tick((now - clock.start) / 1000);
+  const deltaSeconds = (now - lastTime) / 1000;
+  lastTime = now;
+  tick(deltaSeconds, occupancy);
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
