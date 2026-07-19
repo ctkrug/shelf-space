@@ -189,6 +189,53 @@ canvas {
   box-shadow: 0 0 0 3px rgba(217, 138, 61, 0.22);
 }
 
+.drop-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 1px dashed rgba(217, 138, 61, 0.42);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: background var(--motion-ui), border-color var(--motion-ui), transform var(--motion-ui);
+}
+
+.drop-zone:hover,
+.drop-zone.is-dragging,
+.drop-zone:focus-visible {
+  border-color: var(--accent);
+  background: rgba(217, 138, 61, 0.12);
+  outline: none;
+}
+
+.drop-zone.is-dragging { transform: translateY(-1px); }
+
+.file-picker {
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--accent-support);
+  color: var(--text);
+  font: 600 0.76rem var(--font-ui);
+  cursor: pointer;
+}
+
+.file-picker:hover { filter: brightness(1.12); }
+.file-picker:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.input-message {
+  min-height: 1.2em;
+  margin: -8px 0 0;
+  color: var(--success);
+  font-size: 0.75rem;
+}
+
+.input-message.is-error { color: var(--danger); }
+
 .panel-actions {
   display: flex;
   align-items: center;
