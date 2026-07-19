@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { computeShelfState, computeAllShelfStates, TOKENS_PER_BOOK } from "../src/core/shelf.js";
+import {
+  computeShelfState,
+  computeAllShelfStates,
+  shelfCapacityBooksFor,
+  TOKENS_PER_BOOK,
+} from "../src/core/shelf.js";
 import { MODELS } from "../src/core/models.js";
 
 const gpt = MODELS.find((m) => m.id === "gpt-5.6");
@@ -40,6 +45,23 @@ describe("computeShelfState", () => {
     const state = computeShelfState("word ".repeat(200_000), gpt);
     expect(state.fillRatio).toBeGreaterThanOrEqual(0);
     expect(state.fillRatio).toBeLessThanOrEqual(1);
+  });
+});
+
+describe("shelfCapacityBooksFor", () => {
+  it("matches the shelfCapacityBooks computeShelfState derives for the same model", () => {
+    for (const model of MODELS) {
+      expect(shelfCapacityBooksFor(model)).toBe(computeShelfState("some text", model).shelfCapacityBooks);
+    }
+  });
+
+  it("is independent of any pasted text", () => {
+    expect(shelfCapacityBooksFor(gpt)).toBe(shelfCapacityBooksFor(gpt));
+  });
+
+  it("never returns less than 1, even for a tiny context window", () => {
+    const tinyModel = { ...gpt, contextWindow: 1 };
+    expect(shelfCapacityBooksFor(tinyModel)).toBeGreaterThanOrEqual(1);
   });
 });
 
