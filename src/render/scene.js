@@ -4,6 +4,7 @@ import { createBookcase } from "./bookcase.js";
 import { createLamp } from "./lamp.js";
 import { createBookRenderers } from "./books.js";
 import { TOTAL_WIDTH } from "./layout3d.js";
+import { createOrbitController } from "./orbit.js";
 
 const BASE_VFOV_DEG = 42;
 const MAX_VFOV_DEG = 56;
@@ -74,6 +75,7 @@ export function createScene(container) {
 
   const books = createBookRenderers(bookcase.bays);
   scene.add(books.group);
+  const orbit = createOrbitController(renderer.domElement, camera, LOOK_AT);
 
   function resize() {
     const aspect = container.clientWidth / container.clientHeight;
@@ -95,5 +97,5 @@ export function createScene(container) {
     renderer.render(scene, camera);
   }
 
-  return { scene, camera, resize, tick, bookcase, lamp, books };
+  return { scene, camera, resize, tick, bookcase, lamp, books, orbit };
 }
