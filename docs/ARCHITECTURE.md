@@ -7,7 +7,7 @@ See [`VISION.md`](VISION.md) for why, [`DESIGN.md`](DESIGN.md) for the visual di
 ## Data flow
 
 ```
-textarea input (src/ui/panel.js)
+textarea / dropped .txt / public GitHub URL (src/ui/panel.js)
   -> computeAllShelfStates(text, MODELS)   [src/core/shelf.js]
        -> per model: estimateTokens(text, model)   [src/core/tokenizer.js]
        -> shelfCapacityBooksFor(model), booksOnShelf/booksOnFloor/fillRatio/overflowing
@@ -35,6 +35,10 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
 - **`layout.js`** — `gridPositions(count, columns)` / `gridRowCount(count, columns)`: pure
   (col, row) grid placement, used for both shelf piles and floor spill so the placement math is
   testable without a WebGL context.
+- **`file-input.js`** — validates browser file boundaries and reads supported text files with
+  designed errors for missing, empty, unsupported, or unreadable input.
+- **`github-repo.js`** — strictly parses public GitHub repository URLs, then flattens a bounded
+  set of supported text files through the public GitHub API.
 
 ## `src/render/` — Three.js, consumes core/ data, not unit-tested (no DOM/WebGL in Vitest)
 
@@ -63,11 +67,14 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
   camera-framing fix: a fixed vertical FOV loses horizontal coverage on narrow viewports, so
   `framingFor(aspect)` widens the FOV first (capped, to avoid fisheye) and only pushes the camera
   back as a last resort, extending `fog.far` to match.
+- **`orbit.js`** — canvas-only pointer drag orbit and wheel zoom, with restrained elevation and
+  distance limits so a user can explore the shelf without losing the bookcase.
 
 ## `src/ui/` and `src/audio/` — DOM/WebAudio, not unit-tested
 
-- **`panel.js`** — wires the paste textarea (debounced 120ms), clear button, and the mobile
-  bottom-sheet toggle; exposes `renderReadout(states, models)` for the per-shelf token/book legend.
+- **`panel.js`** — wires the textarea (debounced 120ms), `.txt` drop/picker, public GitHub URL
+  hydration, clear button, mobile bottom-sheet toggle, and inline input status; exposes
+  `renderReadout(states, models)` for the per-shelf token/book legend.
 - **`sfx.js`** — WebAudio-synthesized thunk/clatter SFX (oscillators only, no audio files); mute
   state persists to `localStorage`; `AudioContext` is created lazily so it only ever spins up
   inside a user-gesture-driven call.
