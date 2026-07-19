@@ -68,6 +68,13 @@
               placeholder="Paste an essay, a whole novel, a flattened repo…"
             ></textarea>
 
+            <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Choose or drop a text file">
+              <span>Drop a <strong>.txt</strong> file here</span>
+              <button id="file-picker" class="file-picker" type="button">Browse files</button>
+              <input id="file-input" type="file" accept=".txt,text/plain,text/markdown" hidden />
+            </div>
+            <p id="input-message" class="input-message" role="status"></p>
+
             <div class="panel-actions">
               <button id="clear-btn" class="btn btn-ghost" type="button">Clear</button>
               <span id="char-count" class="char-count">0 characters</span>
