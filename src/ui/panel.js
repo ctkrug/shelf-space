@@ -16,6 +16,10 @@ export function initPastePanel({ onInput }) {
   const charCount = document.getElementById("char-count");
   const readout = document.getElementById("readout");
   const panelToggle = document.getElementById("panel-toggle");
+  const dropZone = document.getElementById("drop-zone");
+  const filePicker = document.getElementById("file-picker");
+  const fileInput = document.getElementById("file-input");
+  const inputMessage = document.getElementById("input-message");
 
   let debounceTimer = null;
 
@@ -31,6 +35,44 @@ export function initPastePanel({ onInput }) {
   }
 
   textarea.addEventListener("input", scheduleEmit);
+
+  function showInputMessage(message, isError = false) {
+    inputMessage.textContent = message;
+    inputMessage.classList.toggle("is-error", isError);
+  }
+
+  async function loadFile(file) {
+    const result = await readTextFile(file);
+    if (!result.ok) {
+      showInputMessage(result.error, true);
+      return;
+    }
+    textarea.value = result.text;
+    showInputMessage(`Loaded ${file.name}.`);
+    emit();
+  }
+
+  filePicker.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => {
+    if (fileInput.files?.[0]) loadFile(fileInput.files[0]);
+    fileInput.value = "";
+  });
+  dropZone.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    dropZone.classList.add("is-dragging");
+  });
+  dropZone.addEventListener("dragleave", () => dropZone.classList.remove("is-dragging"));
+  dropZone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    dropZone.classList.remove("is-dragging");
+    loadFile(event.dataTransfer?.files?.[0]);
+  });
+  dropZone.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      fileInput.click();
+    }
+  });
 
   clearBtn.addEventListener("click", () => {
     textarea.value = "";
@@ -75,3 +117,4 @@ export function initPastePanel({ onInput }) {
 
   return { renderReadout };
 }
+import { readTextFile } from "../core/file-input.js";
