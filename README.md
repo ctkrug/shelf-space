@@ -29,18 +29,17 @@ read.
 
 - Paste-box input, tokenized live as you type (debounced), stacking books onto all four shelves
   within about a second.
+- Drop a `.txt`/Markdown file or paste a public GitHub repository URL to stack its supported
+  text files together.
 - Four shelves: GPT-5.6, Claude, Gemini, Kimi K3 — capacities and tokenizer approximations kept
   in one config module so new models are a data change, not a code change.
 - Books ease into their resting slot, spill onto the floor once a shelf's capacity is exceeded,
   and each shelf's live token count and book fill are always visible in the readout.
 - A hanging banker's lamp whose glow and shadow reach respond to overall shelf occupancy, with a
   synth thunk/clatter (mute persisted) on placement and overflow.
-
-## Planned
-
-- File/repo drop input (`.txt`, flattened public GitHub repos).
-- Camera orbit around the bookcase; click a book to see which chunk of source text it represents.
-- Shareable state via URL so a paste + its shelf outcome can be linked to someone else.
+- Drag or scroll to inspect the shelves, then click a book to see its exact source slice.
+- The current input is encoded into a shareable URL automatically; long inputs remain local and
+  show a clear notice rather than creating an unreliable link.
 
 ## Stack
 
@@ -56,6 +55,8 @@ read.
 npm install
 npm run dev      # local dev server with hot reload
 npm test         # run the test suite
+npm run test:coverage # enforce core-logic coverage
+npm run lint     # check source and tests
 npm run build    # production build to dist/
 ```
 
