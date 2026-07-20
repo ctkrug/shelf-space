@@ -14,6 +14,7 @@ const MAX_RENDERED_FLOOR_BOOKS = 6000;
 // Per docs/DESIGN.md's juice plan: each book eases into its resting slot
 // over 110-140ms rather than popping into place.
 const SPAWN_DURATION_S = 0.12;
+const SELECTED_BOOK_COLOR = 0xf3e6d0;
 
 const dummy = new THREE.Object3D();
 
@@ -65,6 +66,9 @@ function createBayBooks(model, layout) {
 
   let previousShelfRendered = 0;
   let previousFloorRendered = 0;
+  let shelfBookCount = 0;
+  let floorBookCount = 0;
+  let selected = null;
   const shelfSpawns = [];
   const floorSpawns = [];
 
@@ -146,11 +150,45 @@ function createBayBooks(model, layout) {
   group.add(shelfMesh, floorMesh);
 
   function update(shelfState) {
+    shelfBookCount = shelfState.booksOnShelf;
+    floorBookCount = shelfState.booksOnFloor;
     setShelfCount(shelfState.booksOnShelf);
     setFloorCount(shelfState.booksOnFloor);
   }
 
-  return { group, update, animate };
+  function pick(raycaster) {
+    const hit = raycaster.intersectObjects([shelfMesh, floorMesh], false)[0];
+    if (!hit || hit.instanceId === undefined) return null;
+    const isFloor = hit.object === floorMesh;
+    const bookIndex = isFloor ? shelfBookCount + hit.instanceId : hit.instanceId;
+    const totalBooks = shelfBookCount + floorBookCount;
+    if (bookIndex >= totalBooks) return null;
+    return {
+      bookIndex,
+      totalBooks,
+      isFloor,
+      distance: hit.distance,
+      mesh: hit.object,
+      instanceId: hit.instanceId,
+    };
+  }
+
+  function clearSelection() {
+    if (!selected) return;
+    selected.mesh.setColorAt(selected.instanceId, new THREE.Color(selected.color));
+    selected.mesh.instanceColor.needsUpdate = true;
+    selected = null;
+  }
+
+  function select(hit) {
+    clearSelection();
+    const color = bookColorFor(hit.isFloor ? hit.instanceId + 3 : hit.instanceId);
+    hit.mesh.setColorAt(hit.instanceId, new THREE.Color(SELECTED_BOOK_COLOR));
+    hit.mesh.instanceColor.needsUpdate = true;
+    selected = { ...hit, color };
+  }
+
+  return { group, update, animate, pick, select, clearSelection };
 }
 
 /** Builds book renderers for every bay and returns a single update(states) entry point. */
@@ -174,5 +212,25 @@ export function createBookRenderers(bays) {
     for (const bay of perBay) bay.animate(deltaSeconds);
   }
 
-  return { group, update, animate };
+  function pick(raycaster) {
+    const hits = perBay
+      .map((bay) => {
+        const hit = bay.pick(raycaster);
+        return hit ? { modelId: bay.modelId, ...hit } : null;
+      })
+      .filter(Boolean);
+    return hits.sort((a, b) => a.distance - b.distance)[0] ?? null;
+  }
+
+  function clearSelection() {
+    for (const bay of perBay) bay.clearSelection();
+  }
+
+  function select(hit) {
+    clearSelection();
+    const bay = perBay.find((candidate) => candidate.modelId === hit.modelId);
+    if (bay) bay.select(hit);
+  }
+
+  return { group, update, animate, pick, select, clearSelection };
 }
