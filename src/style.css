@@ -344,6 +344,75 @@ canvas {
   color: var(--danger);
 }
 
+/* --- selected book: compact source card on the opposing lower corner --- */
+
+.book-inspector {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  width: min(380px, calc(100vw - var(--space-4)));
+  max-height: min(42vh, 390px);
+  padding: var(--space-3);
+  overflow: hidden;
+  background: rgba(36, 26, 18, 0.93);
+  border: 1px solid rgba(217, 138, 61, 0.28);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+  animation: inspector-in 160ms ease-out;
+}
+
+.inspector-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.inspector-kicker {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.inspector-title {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.inspector-close {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  font: 1.5rem/1 var(--font-ui);
+}
+
+.inspector-range {
+  margin: var(--space-2) 0 var(--space-1);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.inspector-text {
+  max-height: 215px;
+  margin: 0;
+  overflow: auto;
+  padding: var(--space-2);
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid var(--accent-support);
+  color: var(--text);
+  font: 0.8rem/1.55 var(--font-ui);
+  white-space: pre-wrap;
+}
+
+@keyframes inspector-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* --- responsive: bottom-sheet on phones, per DESIGN.md layout intent --- */
 
 @media (max-width: 768px) {
@@ -393,10 +462,21 @@ canvas {
   .panel-toggle[aria-expanded="false"] + .panel-body {
     max-height: 0;
   }
+
+  .book-inspector {
+    right: var(--space-2);
+    bottom: calc(55vh + var(--space-2));
+    width: calc(100vw - var(--space-4));
+    max-height: 36vh;
+    padding: var(--space-2);
+  }
+
+  .inspector-text { max-height: 145px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
+    animation: none !important;
   }
 }
