@@ -84,6 +84,20 @@
           </div>
         </div>
       </section>
+
+      <aside id="book-inspector" class="book-inspector" hidden aria-label="Selected book source">
+        <div class="inspector-heading">
+          <div>
+            <span id="inspector-kicker" class="inspector-kicker">Selected book</span>
+            <h2 id="inspector-title" class="inspector-title">Source slice</h2>
+          </div>
+          <button id="inspector-close" class="icon-btn inspector-close" type="button" aria-label="Close selected book source">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <p id="inspector-range" class="inspector-range"></p>
+        <pre id="inspector-text" class="inspector-text"></pre>
+      </aside>
     </div>
 
     <script type="module" src="./src/main.js"></script>
