@@ -17,6 +17,7 @@ textarea / dropped .txt / public GitHub URL (src/ui/panel.js)
   -> readout.renderReadout(states, MODELS)   [src/ui/panel.js]  updates the token/book legend
   -> occupancy (avgFillRatio, anyOverflowing) feeds lamp.update() every frame [src/render/lamp.js]
   -> audio.playThunk()/playClatter() on book-count/overflow transitions [src/audio/sfx.js]
+  -> canvas tap -> books.pick() -> sourceForBookHit() -> source inspector
 ```
 
 `src/main.js` is the only place that wires these together; every other module is either pure
@@ -39,6 +40,10 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
   designed errors for missing, empty, unsupported, or unreadable input.
 - **`github-repo.js`** — strictly parses public GitHub repository URLs, then flattens a bounded
   set of supported text files through the public GitHub API.
+- **`chunks.js`** — partitions the exact original input into contiguous character ranges for a
+  model's rendered books; it deliberately does not reuse the approximate tokenizer estimate.
+- **`book-source.js`** — validates a rendered-book hit and formats its model label, shelf/floor
+  location, ordinal, and source range for the inspector UI.
 
 ## `src/render/` — Three.js, consumes core/ data, not unit-tested (no DOM/WebGL in Vitest)
 
@@ -61,7 +66,8 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
   near-zero scale and ease up over 120ms (`animate(deltaSeconds)`, called every frame) instead of
   popping in. **Gotcha:** `InstancedMesh.frustumCulled` must be disabled — Three.js caches its
   bounding sphere from the *first* culling test (count=0, before any paste) and never recomputes
-  it, so a mesh that starts empty silently stops rendering forever once real instances exist.
+  it, so a mesh that starts empty silently stops rendering forever once real instances exist. It
+  also raycasts instanced meshes for selection and restores the original spine on dismissal.
 - **`scene.js`** — camera, renderer, lighting, fog, and orchestration: builds the bookcase, lamp,
   and books, and exposes `resize()` / `tick(deltaSeconds, occupancy)`. Also owns the portrait-aspect
   camera-framing fix: a fixed vertical FOV loses horizontal coverage on narrow viewports, so
@@ -74,7 +80,8 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
 
 - **`panel.js`** — wires the textarea (debounced 120ms), `.txt` drop/picker, public GitHub URL
   hydration, clear button, mobile bottom-sheet toggle, and inline input status; exposes
-  `renderReadout(states, models)` for the per-shelf token/book legend.
+  `renderReadout(states, models)` for the per-shelf token/book legend and renders the selected
+  book's source inspector.
 - **`sfx.js`** — WebAudio-synthesized thunk/clatter SFX (oscillators only, no audio files); mute
   state persists to `localStorage`; `AudioContext` is created lazily so it only ever spins up
   inside a user-gesture-driven call.
@@ -84,6 +91,8 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
 `src/main.js` creates the scene, wires the paste panel's `onInput` to
 `computeAllShelfStates` → `books.update` + `readout.renderReadout`, maintains the `occupancy`
 object the render loop reads every frame, and triggers SFX on book-count/overflow transitions.
+It treats a pointer movement under 8px as a book tap, while larger drags remain orbit gestures;
+empty canvas taps and Escape clear the source inspector.
 
 ## Running it
 
