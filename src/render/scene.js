@@ -94,8 +94,7 @@ export function createScene(container) {
     const { vFovDeg, distance } = framingFor(aspect);
     camera.aspect = aspect;
     camera.fov = vFovDeg;
-    camera.position.z = distance;
-    camera.lookAt(LOOK_AT);
+    orbit.setFramingDistance(distance);
     camera.updateProjectionMatrix();
     scene.fog.far = Math.max(11, distance + 6);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));

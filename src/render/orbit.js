@@ -3,21 +3,26 @@ const MAX_DISTANCE = 8.5;
 const MIN_POLAR = 0.8;
 const MAX_POLAR = 1.65;
 
-export function clampOrbitState({ azimuth, polar, distance }) {
+export function clampOrbitState({ azimuth, polar, distance }, maxDistance = MAX_DISTANCE) {
   return {
     azimuth,
     polar: Math.min(MAX_POLAR, Math.max(MIN_POLAR, polar)),
-    distance: Math.min(MAX_DISTANCE, Math.max(MIN_DISTANCE, distance)),
+    distance: Math.min(maxDistance, Math.max(MIN_DISTANCE, distance)),
   };
+}
+
+export function orbitStateForDistance(state, distance) {
+  return clampOrbitState({ ...state, distance });
 }
 
 /** Adds lightweight mouse/touch orbiting without intercepting UI overlay events. */
 export function createOrbitController(element, camera, target) {
   let state = { azimuth: 0, polar: 1.28, distance: camera.position.distanceTo(target) };
+  let maxDistance = MAX_DISTANCE;
   let pointer = null;
 
   function apply() {
-    state = clampOrbitState(state);
+    state = clampOrbitState(state, maxDistance);
     const sinPolar = Math.sin(state.polar);
     camera.position.set(
       target.x + state.distance * sinPolar * Math.sin(state.azimuth),
@@ -54,7 +59,13 @@ export function createOrbitController(element, camera, target) {
   element.addEventListener("wheel", onWheel, { passive: false });
   apply();
 
-  return { apply, dispose: () => {
+  function setFramingDistance(distance) {
+    maxDistance = Math.max(MAX_DISTANCE, distance);
+    state = clampOrbitState({ ...state, distance }, maxDistance);
+    apply();
+  }
+
+  return { apply, setFramingDistance, dispose: () => {
     element.removeEventListener("pointerdown", onPointerDown);
     element.removeEventListener("pointermove", onPointerMove);
     element.removeEventListener("pointerup", onPointerUp);
