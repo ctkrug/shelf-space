@@ -24,13 +24,14 @@ const TARGET_HALF_H_ANGLE_RAD = Math.atan(HALF_WIDTH_WITH_MARGIN / DESKTOP_DISTA
  * desktop framing does, per DESIGN.md's "camera angle flattens slightly"
  * phone layout intent.
  */
-function framingFor(aspect) {
-  const neededVFovRad = 2 * Math.atan(Math.tan(TARGET_HALF_H_ANGLE_RAD) / aspect);
+export function framingFor(aspect) {
+  const safeAspect = Number.isFinite(aspect) && aspect > 0 ? aspect : 16 / 9;
+  const neededVFovRad = 2 * Math.atan(Math.tan(TARGET_HALF_H_ANGLE_RAD) / safeAspect);
   const vFovDeg = Math.min(MAX_VFOV_DEG, Math.max(BASE_VFOV_DEG, (neededVFovRad * 180) / Math.PI));
   const vFovRad = (vFovDeg * Math.PI) / 180;
   const distance = Math.max(
     DESKTOP_DISTANCE,
-    HALF_WIDTH_WITH_MARGIN / (Math.tan(vFovRad / 2) * aspect),
+    HALF_WIDTH_WITH_MARGIN / (Math.tan(vFovRad / 2) * safeAspect),
   );
   return { vFovDeg, distance };
 }
@@ -42,13 +43,21 @@ function framingFor(aspect) {
  * by calling the returned `books.update(shelfStatesByModelId)`.
  */
 export function createScene(container) {
+  function viewportSize() {
+    return {
+      width: Math.max(1, container.clientWidth),
+      height: Math.max(1, container.clientHeight),
+    };
+  }
+
+  const initialSize = viewportSize();
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(THEME.bg);
   scene.fog = new THREE.Fog(THEME.bg, FOG_NEAR, 11);
 
   const camera = new THREE.PerspectiveCamera(
     BASE_VFOV_DEG,
-    container.clientWidth / container.clientHeight,
+    initialSize.width / initialSize.height,
     0.1,
     100,
   );
@@ -57,7 +66,7 @@ export function createScene(container) {
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setSize(initialSize.width, initialSize.height);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
@@ -80,7 +89,8 @@ export function createScene(container) {
   const pointer = new THREE.Vector2();
 
   function resize() {
-    const aspect = container.clientWidth / container.clientHeight;
+    const { width, height } = viewportSize();
+    const aspect = width / height;
     const { vFovDeg, distance } = framingFor(aspect);
     camera.aspect = aspect;
     camera.fov = vFovDeg;
@@ -88,7 +98,8 @@ export function createScene(container) {
     camera.lookAt(LOOK_AT);
     camera.updateProjectionMatrix();
     scene.fog.far = Math.max(11, distance + 6);
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(width, height);
   }
 
   resize();
