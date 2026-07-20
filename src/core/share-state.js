@@ -37,3 +37,22 @@ export function shareStateForText(text) {
   if (payload.length > MAX_SHARE_PAYLOAD_LENGTH) return { ok: false, reason: "too-long" };
   return { ok: true, payload };
 }
+
+/** Restores valid shared text from a URL without trusting malformed input. */
+export function sharedTextFromUrl(url) {
+  try {
+    return decodeSharedText(new URL(url).searchParams.get("s"));
+  } catch {
+    return null;
+  }
+}
+
+/** Replaces the input query state while preserving the URL's origin and hash. */
+export function urlWithShareState(url, text) {
+  const state = shareStateForText(text);
+  if (!state.ok) return null;
+  const next = new URL(url);
+  next.search = "";
+  next.searchParams.set("s", state.payload);
+  return next.toString();
+}
