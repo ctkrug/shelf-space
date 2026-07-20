@@ -13,7 +13,7 @@ function formatCount(n) {
  * and exposes `renderReadout` for the caller to push shelf states back
  * into the per-model legend.
  */
-export function initPastePanel({ onInput }) {
+export function initPastePanel({ onInput, onCloseInspector }) {
   const textarea = document.getElementById("paste-input");
   const clearBtn = document.getElementById("clear-btn");
   const charCount = document.getElementById("char-count");
@@ -23,6 +23,12 @@ export function initPastePanel({ onInput }) {
   const filePicker = document.getElementById("file-picker");
   const fileInput = document.getElementById("file-input");
   const inputMessage = document.getElementById("input-message");
+  const inspector = document.getElementById("book-inspector");
+  const inspectorKicker = document.getElementById("inspector-kicker");
+  const inspectorTitle = document.getElementById("inspector-title");
+  const inspectorRange = document.getElementById("inspector-range");
+  const inspectorText = document.getElementById("inspector-text");
+  const inspectorClose = document.getElementById("inspector-close");
 
   let debounceTimer = null;
 
@@ -100,6 +106,8 @@ export function initPastePanel({ onInput }) {
     panelToggle.setAttribute("aria-expanded", String(!expanded));
   });
 
+  inspectorClose.addEventListener("click", () => onCloseInspector?.());
+
   // Start collapsed on narrow (bottom-sheet) layouts so the shelves stay
   // the hero on first load; desktop's toggle is hidden by CSS anyway.
   if (window.matchMedia("(max-width: 768px)").matches) {
@@ -130,5 +138,18 @@ export function initPastePanel({ onInput }) {
     }
   }
 
-  return { renderReadout };
+  function renderInspector(source) {
+    if (!source) {
+      inspector.hidden = true;
+      return;
+    }
+    inspectorKicker.textContent = `${source.modelLabel} · ${source.location}`;
+    inspectorTitle.textContent = `Book ${source.bookNumber} of ${formatCount(source.totalBooks)}`;
+    inspectorRange.textContent = `Characters ${formatCount(source.start + 1)}–${formatCount(source.end)}`;
+    inspectorText.textContent = source.text || "This book represents a source interval smaller than one character.";
+    inspector.hidden = false;
+    inspectorClose.focus();
+  }
+
+  return { renderReadout, renderInspector };
 }
