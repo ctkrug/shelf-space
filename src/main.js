@@ -16,6 +16,7 @@ muteToggle.setAttribute("aria-pressed", String(audio.isMuted()));
 muteToggle.addEventListener("click", () => {
   const muted = audio.toggleMuted();
   muteToggle.setAttribute("aria-pressed", String(muted));
+  muteToggle.setAttribute("aria-label", muted ? "Unmute shelf sounds" : "Mute shelf sounds");
 });
 
 let previousStates = computeAllShelfStates("", MODELS);
