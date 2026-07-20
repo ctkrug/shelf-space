@@ -32,9 +32,13 @@ export function initPastePanel({ onInput, onCloseInspector }) {
 
   let debounceTimer = null;
 
+  function renderCharCount(text) {
+    charCount.textContent = `${formatCount(text.length)} character${text.length === 1 ? "" : "s"}`;
+  }
+
   async function emit() {
     let text = textarea.value;
-    charCount.textContent = `${formatCount(text.length)} character${text.length === 1 ? "" : "s"}`;
+    renderCharCount(text);
     if (parseGitHubRepoUrl(text)) {
       showInputMessage("Loading public repository…");
       const result = await fetchPublicRepoText(text);
@@ -44,7 +48,7 @@ export function initPastePanel({ onInput, onCloseInspector }) {
       }
       text = result.text;
       textarea.value = text;
-      charCount.textContent = `${formatCount(text.length)} characters`;
+      renderCharCount(text);
       showInputMessage(`Loaded ${result.fileCount} text files from GitHub.`);
     }
     onInput(text);
@@ -151,5 +155,11 @@ export function initPastePanel({ onInput, onCloseInspector }) {
     inspectorClose.focus();
   }
 
-  return { renderReadout, renderInspector };
+  function setText(text) {
+    textarea.value = text;
+    renderCharCount(text);
+    onInput(text);
+  }
+
+  return { renderReadout, renderInspector, setText, showInputMessage };
 }

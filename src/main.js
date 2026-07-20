@@ -4,6 +4,7 @@ import { createAudioController } from "./audio/sfx.js";
 import { computeAllShelfStates } from "./core/shelf.js";
 import { MODELS } from "./core/models.js";
 import { sourceForBookHit } from "./core/book-source.js";
+import { sharedTextFromUrl, urlWithShareState } from "./core/share-state.js";
 
 const container = document.getElementById("app");
 const { resize, tick, books, canvas, pickBookAt } = createScene(container);
@@ -51,11 +52,22 @@ function closeBookInspector() {
   readout.renderInspector(null);
 }
 
+function updateShareUrl(text) {
+  const url = urlWithShareState(window.location.href, text);
+  if (!url) {
+    window.history.replaceState(null, "", urlWithShareState(window.location.href, ""));
+    readout.showInputMessage("Stacked locally; this input is too long to share by URL.");
+    return;
+  }
+  window.history.replaceState(null, "", url);
+}
+
 const readout = initPastePanel({
   onInput: (text) => {
     sourceText = text;
     closeBookInspector();
     applyStates(computeAllShelfStates(text, MODELS));
+    updateShareUrl(text);
   },
   onCloseInspector: closeBookInspector,
 });
@@ -83,7 +95,14 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeBookInspector();
 });
 
-applyStates(previousStates);
+const sharedText = sharedTextFromUrl(window.location.href);
+if (sharedText !== null) readout.setText(sharedText);
+else applyStates(previousStates);
+
+window.addEventListener("popstate", () => {
+  const text = sharedTextFromUrl(window.location.href) ?? "";
+  if (text !== sourceText) readout.setText(text);
+});
 
 let lastTime = performance.now();
 function loop(now) {
