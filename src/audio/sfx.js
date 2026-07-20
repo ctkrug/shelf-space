@@ -1,5 +1,21 @@
 const MUTE_STORAGE_KEY = "shelf-space:muted";
 
+function readMutedPreference() {
+  try {
+    return localStorage.getItem(MUTE_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function persistMutedPreference(muted) {
+  try {
+    localStorage.setItem(MUTE_STORAGE_KEY, String(muted));
+  } catch {
+    // Private browsing or storage policies should not disable the controls.
+  }
+}
+
 /**
  * WebAudio-synthesized SFX (oscillators only, no audio files): a soft
  * "thunk" when books land and a lower "clatter" when a shelf spills
@@ -9,7 +25,7 @@ const MUTE_STORAGE_KEY = "shelf-space:muted";
  */
 export function createAudioController() {
   let ctx = null;
-  let muted = localStorage.getItem(MUTE_STORAGE_KEY) === "true";
+  let muted = readMutedPreference();
 
   function ensureContext() {
     if (ctx) return ctx;
@@ -49,7 +65,7 @@ export function createAudioController() {
 
   function setMuted(next) {
     muted = next;
-    localStorage.setItem(MUTE_STORAGE_KEY, String(muted));
+    persistMutedPreference(muted);
   }
 
   function toggleMuted() {
