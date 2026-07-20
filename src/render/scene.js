@@ -108,6 +108,6 @@ export function createScene(container) {
   }
 
   return {
-    scene, camera, resize, tick, pickBookAt, bookcase, lamp, books, orbit,
+    scene, camera, canvas: renderer.domElement, resize, tick, pickBookAt, bookcase, lamp, books, orbit,
   };
 }
