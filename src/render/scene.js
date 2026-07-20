@@ -76,6 +76,8 @@ export function createScene(container) {
   const books = createBookRenderers(bookcase.bays);
   scene.add(books.group);
   const orbit = createOrbitController(renderer.domElement, camera, LOOK_AT);
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
 
   function resize() {
     const aspect = container.clientWidth / container.clientHeight;
@@ -97,5 +99,15 @@ export function createScene(container) {
     renderer.render(scene, camera);
   }
 
-  return { scene, camera, resize, tick, bookcase, lamp, books, orbit };
+  function pickBookAt(clientX, clientY) {
+    const bounds = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((clientX - bounds.left) / bounds.width) * 2 - 1;
+    pointer.y = -((clientY - bounds.top) / bounds.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    return books.pick(raycaster);
+  }
+
+  return {
+    scene, camera, resize, tick, pickBookAt, bookcase, lamp, books, orbit,
+  };
 }
