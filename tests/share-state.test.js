@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { decodeSharedText, encodeSharedText, shareStateForText } from "../src/core/share-state.js";
+import {
+  decodeSharedText,
+  encodeSharedText,
+  shareStateForText,
+  sharedTextFromUrl,
+  urlWithShareState,
+} from "../src/core/share-state.js";
 
 describe("shared text state", () => {
   it("round-trips Unicode text through a URL-safe payload", () => {
@@ -15,5 +21,14 @@ describe("shared text state", () => {
   it("only creates a share payload within the URL budget", () => {
     expect(shareStateForText("short text")).toMatchObject({ ok: true });
     expect(shareStateForText("x".repeat(5000))).toEqual({ ok: false, reason: "too-long" });
+  });
+
+  it("replaces stale shared state and restores only valid text", () => {
+    const shared = urlWithShareState("https://shelf.space/?old=value#room", "hello");
+
+    expect(shared).toMatch(/^https:\/\/shelf\.space\/\?s=/);
+    expect(shared).toContain("#room");
+    expect(sharedTextFromUrl(shared)).toBe("hello");
+    expect(sharedTextFromUrl("https://shelf.space/?s=bad%25payload")).toBeNull();
   });
 });
