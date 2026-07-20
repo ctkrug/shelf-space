@@ -8,6 +8,7 @@ See [`VISION.md`](VISION.md) for why, [`DESIGN.md`](DESIGN.md) for the visual di
 
 ```
 textarea / dropped .txt / public GitHub URL (src/ui/panel.js)
+  -> URL share state (src/core/share-state.js) [hydrate on load / replace while typing]
   -> computeAllShelfStates(text, MODELS)   [src/core/shelf.js]
        -> per model: estimateTokens(text, model)   [src/core/tokenizer.js]
        -> shelfCapacityBooksFor(model), booksOnShelf/booksOnFloor/fillRatio/overflowing
@@ -44,8 +45,10 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
   model's rendered books; it deliberately does not reuse the approximate tokenizer estimate.
 - **`book-source.js`** — validates a rendered-book hit and formats its model label, shelf/floor
   location, ordinal, and source range for the inspector UI.
+- **`share-state.js`** — UTF-8 base64url encoding and bounded URL replacement/restoration for
+  shareable input; malformed payloads return `null` and oversize input has no URL payload.
 
-## `src/render/` — Three.js, consumes core/ data, not unit-tested (no DOM/WebGL in Vitest)
+## `src/render/` — Three.js, consumes core/ data
 
 - **`theme.js`** — mirrors `DESIGN.md`'s token table as Three.js color ints, plus the cycling
   book-spine palette. Single source so bookcase/lamp/books can't drift from the design doc
@@ -72,9 +75,11 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
   and books, and exposes `resize()` / `tick(deltaSeconds, occupancy)`. Also owns the portrait-aspect
   camera-framing fix: a fixed vertical FOV loses horizontal coverage on narrow viewports, so
   `framingFor(aspect)` widens the FOV first (capped, to avoid fisheye) and only pushes the camera
-  back as a last resort, extending `fog.far` to match.
+  back as a last resort, extending `fog.far` to match. Invalid temporary viewport measurements
+  safely use desktop framing.
 - **`orbit.js`** — canvas-only pointer drag orbit and wheel zoom, with restrained elevation and
-  distance limits so a user can explore the shelf without losing the bookcase.
+  distance limits so a user can explore the shelf without losing the bookcase. Scene reframing
+  goes through this controller so a resize never leaves stale drag state.
 
 ## `src/ui/` and `src/audio/` — DOM/WebAudio, not unit-tested
 
@@ -92,7 +97,8 @@ data (core/) or a self-contained render/UI piece that takes data in and mutates 
 `computeAllShelfStates` → `books.update` + `readout.renderReadout`, maintains the `occupancy`
 object the render loop reads every frame, and triggers SFX on book-count/overflow transitions.
 It treats a pointer movement under 8px as a book tap, while larger drags remain orbit gestures;
-empty canvas taps and Escape clear the source inspector.
+empty canvas taps and Escape clear the source inspector. It restores `?s=` shared text on load,
+replaces it during input, and follows browser history changes without reloading the app.
 
 ## Running it
 
@@ -100,6 +106,7 @@ empty canvas taps and Escape clear the source inspector.
 npm install
 npm run dev      # local dev server, hot reload
 npm test         # vitest — core/ math only, runs in Node, no browser needed
+npm run test:coverage # V8 coverage for core/ (85% line threshold)
 npm run lint     # eslint over src + tests
 npm run build    # static production build to dist/ (base: "./", subpath-servable)
 ```
