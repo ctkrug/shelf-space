@@ -47,7 +47,7 @@ true/false against — no "works well" vibes checks.
     scroll/pinch zooms within sane min/max bounds.
   - Camera controls don't intercept the paste panel's own scroll/touch targets.
 
-- [ ] **2.4 Click a book to see its source text chunk**
+- [x] **2.4 Click a book to see its source text chunk**
   - Clicking/tapping a book mesh highlights it and opens a small panel showing which slice of
     the pasted text it represents.
   - Clicking empty space or pressing Escape closes the panel.
@@ -75,7 +75,7 @@ true/false against — no "works well" vibes checks.
   - The canvas resizes and re-renders correctly (no stretched/cropped scene) on window resize
     and orientation change.
 
-- [ ] **3.4 Accessibility and brand-asset pass**
+- [x] **3.4 Accessibility and brand-asset pass**
   - A generated favicon (accent-colored monogram, not the default globe) is present, and the
     mute button and other icon-only controls have `aria-label`s.
   - Shelf token/overflow status updates are announced via an `aria-live` region for
