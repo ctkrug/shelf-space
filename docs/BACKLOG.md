@@ -52,7 +52,7 @@ true/false against — no "works well" vibes checks.
     the pasted text it represents.
   - Clicking empty space or pressing Escape closes the panel.
 
-- [ ] **2.5 Design polish: paste panel responsive states**
+- [x] **2.5 Design polish: paste panel responsive states**
   - At 390px width the paste panel behaves as the bottom-sheet described in `docs/DESIGN.md`
     (collapsed affordance, expands on tap) with no horizontal scroll.
   - Focus, hover, and active states are themed — no unstyled native textarea/button.
@@ -64,13 +64,13 @@ true/false against — no "works well" vibes checks.
   - A distinct synth "thunk" plays on placement and a "clatter" plays on floor spill; a mute
     toggle in the top bar persists across reloads via `localStorage`.
 
-- [ ] **3.2 Shareable URL state**
+- [x] **3.2 Shareable URL state**
   - After pasting text, the URL updates (e.g. a compressed query param) such that opening that
     URL in a fresh tab reproduces the same shelf/floor state.
   - Very large pastes that would exceed a reasonable URL length degrade gracefully (e.g. a
     "too long to share" notice) instead of breaking navigation.
 
-- [ ] **3.3 Responsive layout across phone/tablet/desktop**
+- [x] **3.3 Responsive layout across phone/tablet/desktop**
   - Layout is verified with no horizontal scroll or overlap at 390px, 768px, and 1440px widths.
   - The canvas resizes and re-renders correctly (no stretched/cropped scene) on window resize
     and orientation change.
