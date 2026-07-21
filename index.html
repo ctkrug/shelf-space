@@ -3,10 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shelf Space — paste anything, watch it fill a context window</title>
+    <title>Shelf Space | See an LLM context window comparison as books</title>
     <meta
       name="description"
-      content="Paste any text and watch it physically stack as books on shelves sized to GPT-5.6, Claude, Gemini, and Kimi K3's real context windows."
+      content="A visual LLM context window comparison for GPT-5.6 Sol, Claude Fable 5, Gemini 3.5 Flash, and Kimi K3 using your own text."
+    />
+    <meta property="og:title" content="Shelf Space | See an LLM context window comparison as books" />
+    <meta
+      property="og:description"
+      content="Paste a repo, manuscript, or research corpus and see which current model context windows can hold it."
     />
     <link
       rel="icon"
@@ -28,22 +33,30 @@
       <div id="ui">
       <header class="topbar">
         <span class="wordmark">Shelf<span class="wordmark-accent">&nbsp;Space</span></span>
-        <button id="mute-toggle" class="icon-btn" type="button" aria-label="Mute shelf sounds" aria-pressed="false">
-          <svg id="mute-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M4 9v6h4l5 5V4L8 9H4z"
-              fill="currentColor"
-            />
-            <path
-              id="mute-slash"
-              d="M16 8.5c1.2 1 1.2 6 0 7"
-              stroke="currentColor"
-              stroke-width="1.6"
-              fill="none"
-              stroke-linecap="round"
-            />
-          </svg>
-        </button>
+        <div class="topbar-actions">
+          <a
+            class="github-link"
+            href="https://github.com/ctkrug/shelf-space"
+            target="_blank"
+            rel="noreferrer"
+          >GitHub</a>
+          <button id="mute-toggle" class="icon-btn" type="button" aria-label="Mute shelf sounds" aria-pressed="false">
+            <svg id="mute-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M4 9v6h4l5 5V4L8 9H4z"
+                fill="currentColor"
+              />
+              <path
+                id="mute-slash"
+                d="M16 8.5c1.2 1 1.2 6 0 7"
+                stroke="currentColor"
+                stroke-width="1.6"
+                fill="none"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
       </header>
 
       <section class="paste-panel" aria-label="Paste text to stack on the shelves">
@@ -101,6 +114,109 @@
       </aside>
       </div>
     </main>
+
+    <article class="product-guide">
+      <header class="guide-hero">
+        <p class="eyebrow">A context limit you can picture</p>
+        <h1>See which model can hold your whole project.</h1>
+        <p class="guide-lede">
+          Shelf Space is an <strong>LLM context window comparison</strong> built for developers
+          sizing a large repo, manuscript, or research corpus. Paste your text and it becomes a
+          row of 2,000-token books on shelves sized to four current API models.
+        </p>
+        <a class="primary-cta" href="https://github.com/ctkrug/shelf-space">View source on GitHub</a>
+      </header>
+
+      <section class="benefit-grid" aria-label="Shelf Space capabilities">
+        <div>
+          <h2>Compare named models</h2>
+          <p>
+            The shelves use GPT-5.6 Sol, Claude Fable 5, Gemini 3.5 Flash, and Kimi K3 instead of
+            vague vendor families. Published input limits are checked against vendor docs.
+          </p>
+        </div>
+        <div>
+          <h2>Keep the scale physical</h2>
+          <p>
+            Every book represents 2,000 estimated tokens. A one-million-token window holds 500
+            books, so a full shelf and a floor spill have a consistent meaning.
+          </p>
+        </div>
+        <div>
+          <h2>Inspect the source</h2>
+          <p>
+            Click any book to open the exact character slice behind it. Short inputs can be shared
+            through URL state; that encoding is not encryption, so leave sensitive text out.
+          </p>
+        </div>
+      </section>
+
+      <section class="model-sample" aria-labelledby="sample-heading">
+        <div>
+          <p class="eyebrow">What the shelves measure</p>
+          <h2 id="sample-heading">Current input-window sample</h2>
+          <p>
+            These capacities are the model input limits represented by the empty shelves. Token
+            counts in the app are local estimates, not vendor billing counts. Exact totals vary
+            with tokenizer version and the mix of prose, code, punctuation, and non-English text.
+          </p>
+        </div>
+        <dl class="capacity-list">
+          <div><dt>GPT-5.6 Sol</dt><dd>1,050,000 tokens</dd></div>
+          <div><dt>Claude Fable 5</dt><dd>1,000,000 tokens</dd></div>
+          <div><dt>Gemini 3.5 Flash</dt><dd>1,000,000 tokens</dd></div>
+          <div><dt>Kimi K3</dt><dd>1,048,576 tokens</dd></div>
+        </dl>
+      </section>
+
+      <section class="faq" aria-labelledby="faq-heading">
+        <p class="eyebrow">Direct answers</p>
+        <h2 id="faq-heading">Context window FAQ</h2>
+
+        <details open>
+          <summary>What does an LLM context window comparison show?</summary>
+          <p>
+            It compares how many input tokens each named model can accept in one request. Shelf
+            Space estimates one source four ways, then shows its share of each published window.
+            It does not measure response quality, retrieval accuracy, price, or usable output room.
+          </p>
+        </details>
+        <details>
+          <summary>How much text fits in Claude context window?</summary>
+          <p>
+            Claude Fable 5 has a one-million-token context window according to Anthropic's current
+            API documentation. The amount of text varies by content, and prompts plus expected
+            output also consume the request budget.
+          </p>
+        </details>
+        <details>
+          <summary>What is the Kimi K3 context window size?</summary>
+          <p>
+            Kimi K3 supports up to 1,048,576 tokens through the API. Some Kimi membership tiers
+            expose smaller limits, so check the plan and client you intend to use.
+          </p>
+        </details>
+        <details>
+          <summary>Does fitting in the window mean the model will use every detail?</summary>
+          <p>
+            No. A context limit is a hard capacity, not a promise of perfect recall. Long-context
+            retrieval can weaken as prompts grow, and production work may still benefit from
+            chunking, retrieval, caching, or a focused subset of the source.
+          </p>
+        </details>
+      </section>
+
+      <p class="source-note">
+        Capacity sources: <a href="https://developers.openai.com/api/docs/models/gpt-5.6-sol">OpenAI</a>,
+        <a href="https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5">Anthropic</a>,
+        <a href="https://ai.google.dev/gemini-api/docs/whats-new-gemini-3.5">Google</a>, and
+        <a href="https://www.kimi.com/resources/kimi-k3-pricing">Kimi</a>. Checked July 21, 2026.
+      </p>
+    </article>
+
+    <footer class="site-footer">
+      <a href="https://apps.charliekrug.com">More by Charlie Krug <span aria-hidden="true">→</span> apps.charliekrug.com</a>
+    </footer>
 
     <script type="module" src="./src/main.js"></script>
   </body>

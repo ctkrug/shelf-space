@@ -108,6 +108,7 @@ export function initPastePanel({ onInput, onCloseInspector }) {
   panelToggle.addEventListener("click", () => {
     const expanded = panelToggle.getAttribute("aria-expanded") === "true";
     panelToggle.setAttribute("aria-expanded", String(!expanded));
+    document.querySelector(".app-stage")?.classList.toggle("is-panel-open", !expanded);
   });
 
   inspectorClose.addEventListener("click", () => onCloseInspector?.());
