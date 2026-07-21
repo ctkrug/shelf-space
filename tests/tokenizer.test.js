@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { estimateTokens } from "../src/core/tokenizer.js";
 import { MODELS } from "../src/core/models.js";
 
-const gpt = MODELS.find((m) => m.id === "gpt-5.6");
-const claude = MODELS.find((m) => m.id === "claude");
+const gpt = MODELS.find((m) => m.id === "gpt-5.6-sol");
+const claude = MODELS.find((m) => m.id === "claude-fable-5");
 
 describe("estimateTokens", () => {
   it("returns 0 for empty or whitespace-only text", () => {

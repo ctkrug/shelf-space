@@ -7,8 +7,8 @@ import {
 } from "../src/core/shelf.js";
 import { MODELS } from "../src/core/models.js";
 
-const gpt = MODELS.find((m) => m.id === "gpt-5.6");
-const claude = MODELS.find((m) => m.id === "claude");
+const gpt = MODELS.find((m) => m.id === "gpt-5.6-sol");
+const claude = MODELS.find((m) => m.id === "claude-fable-5");
 const kimi = MODELS.find((m) => m.id === "kimi-k3");
 
 describe("computeShelfState", () => {
@@ -71,22 +71,16 @@ describe("computeAllShelfStates", () => {
     expect(Object.keys(states).sort()).toEqual(MODELS.map((m) => m.id).sort());
   });
 
-  it("produces the War and Peace wow moment: GPT-5.6 near capacity, smaller shelves overflow, Kimi barely dents", () => {
+  it("places War and Peace within every current model's published window", () => {
     // ~587,000 words is roughly War and Peace's length.
     const warAndPeace = "word ".repeat(587_000);
     const states = computeAllShelfStates(warAndPeace, MODELS);
 
-    expect(states["gpt-5.6"].fillRatio).toBeGreaterThan(0.8);
-    expect(states["gpt-5.6"].overflowing).toBe(false);
-
-    expect(states.claude.overflowing).toBe(true);
-    expect(states.claude.booksOnFloor).toBeGreaterThan(0);
-
-    expect(states.gemini.overflowing).toBe(true);
-    expect(states.gemini.booksOnFloor).toBeGreaterThan(0);
-
-    expect(states["kimi-k3"].overflowing).toBe(false);
-    expect(states["kimi-k3"].fillRatio).toBeLessThan(0.2);
+    for (const model of MODELS) {
+      expect(states[model.id].fillRatio).toBeGreaterThan(0.65);
+      expect(states[model.id].fillRatio).toBeLessThan(0.85);
+      expect(states[model.id].overflowing).toBe(false);
+    }
   });
 
   it("returns an empty-books state for every model on empty input", () => {
