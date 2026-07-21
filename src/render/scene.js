@@ -52,7 +52,7 @@ export function createScene(container) {
 
   const initialSize = viewportSize();
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(THEME.bg);
+  scene.background = null;
   scene.fog = new THREE.Fog(THEME.bg, FOG_NEAR, 11);
 
   const camera = new THREE.PerspectiveCamera(
@@ -64,15 +64,16 @@ export function createScene(container) {
   camera.position.set(0, 1.55, DESKTOP_DISTANCE);
   camera.lookAt(LOOK_AT);
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setClearColor(THEME.bg, 0);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(initialSize.width, initialSize.height);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
-  const ambient = new THREE.AmbientLight(0x3a2c1e, 0.7);
-  const fill = new THREE.DirectionalLight(0x8a6a4a, 0.35);
+  const ambient = new THREE.AmbientLight(0x7a5a3a, 1.05);
+  const fill = new THREE.DirectionalLight(0xd0a574, 0.65);
   fill.position.set(-3, 3, 4);
   scene.add(ambient, fill);
 
