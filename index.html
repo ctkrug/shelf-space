@@ -22,9 +22,10 @@
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
-    <div id="app" role="presentation"></div>
+    <main class="app-stage">
+      <div id="app" role="presentation"></div>
 
-    <div id="ui">
+      <div id="ui">
       <header class="topbar">
         <span class="wordmark">Shelf<span class="wordmark-accent">&nbsp;Space</span></span>
         <button id="mute-toggle" class="icon-btn" type="button" aria-label="Mute shelf sounds" aria-pressed="false">
@@ -98,7 +99,8 @@
         <p id="inspector-range" class="inspector-range"></p>
         <pre id="inspector-text" class="inspector-text"></pre>
       </aside>
-    </div>
+      </div>
+    </main>
 
     <script type="module" src="./src/main.js"></script>
   </body>
