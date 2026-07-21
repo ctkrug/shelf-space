@@ -12,6 +12,8 @@ const { resize, tick, books, canvas, pickBookAt } = createScene(container);
 window.addEventListener("resize", resize);
 
 const audio = createAudioController();
+window.addEventListener("pointerdown", audio.prime, { once: true, capture: true });
+window.addEventListener("keydown", audio.prime, { once: true, capture: true });
 const muteToggle = document.getElementById("mute-toggle");
 muteToggle.setAttribute("aria-pressed", String(audio.isMuted()));
 muteToggle.addEventListener("click", () => {
@@ -34,8 +36,12 @@ function applyStates(states) {
   const newlyOverflowing = MODELS.some(
     (m) => states[m.id].overflowing && !previousStates[m.id].overflowing,
   );
+  const newlyFull = MODELS.some(
+    (m) => states[m.id].fillRatio === 1 && previousStates[m.id].fillRatio < 1,
+  );
 
   if (totalBooksAfter > totalBooksBefore) audio.playThunk();
+  if (newlyFull) audio.playChime();
   if (newlyOverflowing) audio.playClatter();
 
   books.update(states);
@@ -64,6 +70,7 @@ function updateShareUrl(text) {
 
 const readout = initPastePanel({
   onInput: (text) => {
+    if (text !== sourceText) audio.playRustle();
     sourceText = text;
     closeBookInspector();
     applyStates(computeAllShelfStates(text, MODELS));
